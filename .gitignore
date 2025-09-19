@@ -1,0 +1,8 @@
+# Ignore node modules folder
+node_modules/
+
+# Ignore archive zip file
+archive.zip
+
+# Ignore environment config file
+config.env

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tours Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+        
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tours Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Location</th>
+                <th>Country</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Visitors</th>
+                <th>Revenue</th>
+                <th>Accommodation</th>
+                <th>Popular</th>
+                <th>Revenue/Visitor</th>
+            </tr>
+        </thead>
+        <tbody id="tours-data">
+            <!-- Dynamic rows will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('http://127.0.0.1:3000/api/v1/tours/all')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.data || !data.data.tours) throw new Error("Invalid API response format");
+
+                    const tours = data.data.tours.slice(0, 100); // Limit to 100 rows
+                    const tbody = document.getElementById('tours-data');
+                    tbody.innerHTML = '';
+
+                    const fragment = document.createDocumentFragment();
+
+                    tours.forEach(tour => {
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `
+                            <td>${tour.id || 'N/A'}</td>
+                            <td>
+  <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tour.Location + ', ' + tour.Country)}"
+     target="_blank">
+    ${tour.Location}
+  </a>
+</td>
+
+                            <td>${tour.Country || 'N/A'}</td>
+                            <td>${tour.Category || 'N/A'}</td>
+                            <td>${tour.Rating ?? 'N/A'}</td>
+                            <td>${tour.Visitors ?? 'N/A'}</td>
+                            <td>${tour.Revenue ?? 'N/A'}</td>
+                            <td>${tour.Accommodation_Available || 'N/A'}</td>
+                            <td>${tour.isPopular ? '✅' : '❌'}</td>
+                            <td>${tour.revenuePerVisitor || 'N/A'}</td>
+                        `;
+
+                        fragment.appendChild(row);
+                    });
+
+                    tbody.appendChild(fragment);
+                })
+                .catch(err => console.error('❌ Error loading tours data:', err));
+        });
+    </script>
+</body>
+
+</html>

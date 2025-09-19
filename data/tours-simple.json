@@ -1,0 +1,55 @@
+[{
+        "id": 6003,
+        "Location": "Great Pyramid of Giza",
+        "Country": "Egypt",
+        "Category": "Historical",
+        "Visitors": 5000000,
+        "Rating": 4.80,
+        "Revenue": 25000000,
+        "Accommodation_Available": "Yes",
+        "startLocation": {
+            "type": "Point",
+            "coordinates": [31.1342, 29.9792],
+            "description": "The Great Pyramid of Giza",
+            "address": "Giza Plateau, Giza, Egypt"
+        },
+        "timestamp": "2025-09-14T18:30:00.000Z",
+        "startDate": "2025-09-25T18:30:00.000Z"
+    },
+    {
+        "id": 6004,
+        "Location": "Pyramids of Saqqara",
+        "Country": "Egypt",
+        "Category": "Historical",
+        "Visitors": 4200000,
+        "Rating": 4.50,
+        "Revenue": 18000000,
+        "Accommodation_Available": "Yes",
+        "startLocation": {
+            "type": "Point",
+            "coordinates": [31.2165, 29.8711],
+            "description": "Step Pyramid of Djoser",
+            "address": "Saqqara, Giza, Egypt"
+        },
+        "timestamp": "2025-09-14T18:35:00.000Z",
+        "startDate": "2025-09-17T18:35:00.000Z"
+    },
+    {
+        "id": 6005,
+        "Location": "Luxor Temple",
+        "Country": "Egypt",
+        "Category": "Cultural",
+        "Visitors": 3000000,
+        "Rating": 4.70,
+        "Revenue": 16000000,
+        "Accommodation_Available": "No",
+        "startLocation": {
+            "type": "Point",
+            "coordinates": [32.6396, 25.6996],
+            "description": "Luxor Temple on the east bank of the Nile",
+            "address": "Luxor, Egypt"
+        },
+        "timestamp": "2025-09-14T18:40:00.000Z",
+        "startDate": "2025-10-25T18:40:00.000Z"
+    }
+]
