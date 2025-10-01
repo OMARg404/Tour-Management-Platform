@@ -5,7 +5,6 @@ const tourSchema = new mongoose.Schema({
     id: {
         type: Number,
         unique: true,
-        // required: [true, 'ID is required'],
         min: [1, 'ID must be greater than 0'],
         validate: {
             validator: Number.isInteger,
@@ -62,22 +61,18 @@ const tourSchema = new mongoose.Schema({
         },
         required: [true, 'Accommodation availability is required']
     },
-    slug: {
-        type: String
-    },
-    createdAtCustom: {
-        type: String
-    },
+    slug: String,
+    createdAtCustom: String,
 
     startLocation: {
         type: {
             type: String,
             default: 'Point',
-            enum: ['Point'] // GeoJSON لازم يكون Point
+            enum: ['Point']
         },
         coordinates: {
             type: [Number],
-            required: [true, 'Coordinates are required'], // [longitude, latitude]
+            required: [true, 'Coordinates are required'],
             validate: {
                 validator: function(val) {
                     return val.length === 2;
@@ -100,14 +95,29 @@ const tourSchema = new mongoose.Schema({
     },
     timestamp: {
         type: Date,
-        default: Date.now // ⏰ وقت تسجيل الرحلة في النظام
-    }
+        default: Date.now
+    },
+
+    // ✅ Array of User IDs (who booked this tour)
+    bookedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // assuming you have a User model
+        validate: {
+            validator: async function(val) {
+                const User = mongoose.model('User');
+                const exists = await User.exists({ _id: val });
+                return !!exists;
+            },
+            message: 'User with ID {VALUE} does not exist'
+        }
+    }]
 
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
+
 
 // ✅ Add geospatial index
 tourSchema.index({ startLocation: '2dsphere' });
@@ -319,6 +329,31 @@ tourSchema.statics.getStatsByCountry = async function() {
         { $sort: { avgRevenue: -1 } }
     ]);
 };
+
+
+// Document Middleware - validate bookedUsers before save
+tourSchema.pre('save', async function(next) {
+    if (this.bookedUsers && this.bookedUsers.length > 0) {
+        const User = mongoose.model('User');
+        for (let userId of this.bookedUsers) {
+            const exists = await User.exists({ _id: userId });
+            if (!exists) {
+                return next(
+                    new Error(`❌ User with ID ${userId} not found in the database`)
+                );
+            }
+        }
+    }
+    next();
+});
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'bookedUsers',
+        select: 'name email role'
+    });
+    next();
+});
+
 
 // ✅ Export the model
 const Tour = mongoose.model('Tour', tourSchema);

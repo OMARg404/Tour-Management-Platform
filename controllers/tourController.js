@@ -12,16 +12,27 @@ exports.aliasTopTours = (req, res, next) => {
 
 exports.checkID = async(req, res, next, id) => {
     try {
-        const tour = await Tour.findOne({ id: Number(id) });
+        const tour = await Tour.findOne({ id: Number(id) })
+            .populate({
+                path: 'bookedUsers',
+                select: 'name email role'
+            });
+
         if (!tour) {
-            console.log(`the ID not found 🙄`);
-            return res.status(404).json({ message: `Tour ID ${id} not found` });
+            return res.status(404).json({
+                status: 'fail',
+                message: `❌ Tour with ID ${id} not found`
+            });
         }
-        req.tour = tour;
-        console.log(`the ID found 🦍`);
+
+        req.tour = tour; // نخزن التور عشان نستعمله في getTourById
         next();
     } catch (err) {
-        res.status(500).json({ message: 'Error checking tour ID', error: err.message });
+        res.status(500).json({
+            status: 'error',
+            message: 'Error checking tour ID',
+            error: err.message
+        });
     }
 };
 
@@ -59,10 +70,13 @@ exports.getToursByCountry = catchAsync(async(req, res) => {
     }, {});
     res.status(200).json({ countryCounts });
 });
-
 exports.getTourById = catchAsync(async(req, res) => {
-    res.status(200).json({ status: 'success', data: { tour: req.tour } });
+    res.status(200).json({
+        status: 'success',
+        data: { tour: req.tour }
+    });
 });
+
 
 exports.createTour = catchAsync(async(req, res) => {
     const count = await Tour.countDocuments();

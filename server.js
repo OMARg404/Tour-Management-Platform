@@ -5,7 +5,7 @@ const app = require('./app');
 
 const DB = process.env.DATABASE;
 mongoose.connect(DB, {
-        useNewUrlParser: true,
+        // useNewUrlParser: true,  شلتها علشان دوكر
     })
     .then(() => console.log(`DB Connection ✔✔`))
     .catch(err => {
